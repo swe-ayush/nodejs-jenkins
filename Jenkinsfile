@@ -1,32 +1,18 @@
 pipeline {
     agent {
-        dockerfile true
+        dockerfile true  // This will automatically build the Docker image based on the Dockerfile
     }
     stages {
-        stage('Clean and Install Dependencies') {
-            steps {
-                script {
-                    sh 'rm -rf node_modules package-lock.json'
-                    sh 'npm install'
-                }
-            }
-        }
         stage('Run Tests') {
             steps {
+                // No need to build the image again, just run tests inside the prebuilt image
                 sh 'npm test'
-            }
-        }
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    def imageName = "my-node-app:${BUILD_NUMBER}"
-                    docker.build(imageName)
-                }
             }
         }
         stage('Run Docker Container') {
             steps {
                 script {
+                    // Use the already built image from the previous step
                     def imageName = "my-node-app:${BUILD_NUMBER}"
                     sh "docker run -d -p 3000:3000 ${imageName}"
                 }
