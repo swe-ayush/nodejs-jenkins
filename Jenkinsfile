@@ -13,7 +13,7 @@ pipeline {
                     // there's no need to build it again.
                     // Just run the tests inside the container.
                     def imageName = "my-node-app:${BUILD_NUMBER}"  // This uses the automatically built image
-                    sh "docker run --rm ${imageName} npm test"  // Run tests in the already built image
+                    sh "npm test"  // Run tests in the already built image
                 }
             }
         }
