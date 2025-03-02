@@ -7,7 +7,6 @@ yarn-error.log*
 .env # If you're using environment variables, be careful not to commit sensitive data!
 
 # Docker
-Dockerfile
 .dockerignore
 
 # OS generated files
