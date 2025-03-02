@@ -11,7 +11,7 @@ pipeline {
 
                     // Install only the dependencies listed in package.json
                     sh 'npm install --package-lock-only' // Install based on package-lock.json (if present)
-                    sh 'npm install' // Install dependencies from lock file, or package.json
+                    sh 'npm install'
                 }
             }
         }
