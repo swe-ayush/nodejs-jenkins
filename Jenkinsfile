@@ -6,6 +6,7 @@ pipeline {
         stage('Clean and Install Dependencies') {
             steps {
                 script {
+                    sh 'rm -rf node_modules package-lock.json'
                     sh 'npm install'
                 }
             }
