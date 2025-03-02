@@ -10,7 +10,6 @@ COPY package*.json ./
 USER root
 # Install dependencies
 RUN npm install
-USER node
 
 # Copy the rest of the application code
 COPY . .

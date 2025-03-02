@@ -7,7 +7,6 @@ pipeline {
             steps {
                 script {
                     sh 'rm -rf node_modules package-lock.json'
-                    sh 'npm config set unsafe-perm true'
                     sh 'npm install'
                 }
             }
