@@ -1,5 +1,5 @@
 pipeline {
-    agent { docker { image 'node:22-alpine' } }
+    agent { docker { image 'node:22' } }
     stages {
         stage('Clean and Install Dependencies') {
             steps {
