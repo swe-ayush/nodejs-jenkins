@@ -1,5 +1,10 @@
 pipeline {
-    agent { docker { image 'node:22' } }
+    agent {
+        docker {
+            image 'docker:dind'
+            args '--privileged -v /var/run/docker.sock:/var/run/docker.sock'
+        }
+    }
     stages {
         stage('Clean and Install Dependencies') {
             steps {
