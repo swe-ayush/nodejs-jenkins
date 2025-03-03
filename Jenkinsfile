@@ -1,30 +1,73 @@
 pipeline {
-    agent {
-        dockerfile true  // This tells Jenkins to automatically build the Docker image using the Dockerfile
-    }
+    agent any  // Use any available executor
+
     environment {
-        NODE_ENV = 'development'  // Ensure dev dependencies are available for testing
+        // Define environment variables
+        APP_NAME = 'node-app'
+        DOCKER_IMAGE = 'node-app-image'
     }
+
     stages {
-        stage('Run Tests') {
+        stage('Checkout Code') {
             steps {
                 script {
-                    // Since the image is already built from the Dockerfile in the agent block,
-                    // there's no need to build it again.
-                    // Just run the tests inside the container.
-                    def imageName = "my-node-app:${BUILD_NUMBER}"  // This uses the automatically built image
-                    sh "npm test"  // Run tests in the already built image
+                    // Clone the public Git repository
+                    git 'https://github.com/swe-ayush/nodejs-jenkins.git'  // Replace with your actual public Git repo
                 }
             }
         }
+
+        stage('Install Dependencies') {
+            steps {
+                script {
+                    // Install Node.js dependencies
+                    sh 'npm install'
+                }
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                script {
+                    // Run the tests using npm
+                    sh 'npm test'
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    // Build the Docker image
+                    sh 'docker build -t ${DOCKER_IMAGE}:${BUILD_NUMBER} .'
+                }
+            }
+        }
+
         stage('Run Docker Container') {
             steps {
                 script {
-                    // Run the container after tests are successful
-                    def imageName = "my-node-app:${BUILD_NUMBER}"
-                    sh "docker run -d -p 3000:3000 ${imageName}"  // Run the container with the built image
+                    // Run the app in a Docker container locally (no registry)
+                    sh """
+                    docker run -d --name ${APP_NAME}-${BUILD_NUMBER} -p 3000:3000 ${DOCKER_IMAGE}:${BUILD_NUMBER}
+                    """
                 }
             }
+        }
+    }
+
+    post {
+        success {
+            // Notify on success (e.g., via Slack, Email, etc.)
+            echo "Build and deployment succeeded!"
+        }
+        failure {
+            // Notify on failure
+            echo "Build or deployment failed!"
+        }
+        always {
+            // Clean up Docker container after deployment
+            sh 'docker system prune -f'
         }
     }
 }
