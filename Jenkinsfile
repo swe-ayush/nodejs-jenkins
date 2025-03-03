@@ -12,7 +12,7 @@ pipeline {
             steps {
                 script {
                     // Clone the public Git repository
-                    git 'https://github.com/swe-ayush/nodejs-jenkins.git'  // Replace with your actual public Git repo
+                    git branch: 'main', url: 'https://github.com/swe-ayush/nodejs-jenkins.git'
                 }
             }
         }
