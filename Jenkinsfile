@@ -1,10 +1,8 @@
 pipeline {
-    agent any  // Use any available executor
+    agent any  // Use any available Jenkins agent
 
-    environment {
-        // Define environment variables
-        APP_NAME = 'node-app'
-        DOCKER_IMAGE = 'node-app-image'
+    tools {
+        nodejs 'NodeJS 22'  // Refer to the NodeJS version configured in Jenkins (installed via NodeJS plugin)
     }
 
     stages {
@@ -12,7 +10,7 @@ pipeline {
             steps {
                 script {
                     // Clone the public Git repository
-                    git branch: 'main', url: 'https://github.com/swe-ayush/nodejs-jenkins.git'
+                    git branch: 'main', url: 'https://github.com/swe-ayush/nodejs-jenkins.git'  // Replace with your actual public Git repo
                 }
             }
         }
@@ -20,7 +18,7 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 script {
-                    // Install Node.js dependencies
+                    // Run npm install directly on the Jenkins agent (no Docker container)
                     sh 'npm install'
                 }
             }
@@ -29,7 +27,7 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    // Run the tests using npm
+                    // Run tests using npm
                     sh 'npm test'
                 }
             }
@@ -38,7 +36,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Build the Docker image
+                    // Build Docker image (this step can still use Docker to build the image)
                     sh 'docker build -t ${DOCKER_IMAGE}:${BUILD_NUMBER} .'
                 }
             }
@@ -47,10 +45,8 @@ pipeline {
         stage('Run Docker Container') {
             steps {
                 script {
-                    // Run the app in a Docker container locally (no registry)
-                    sh """
-                    docker run -d --name ${APP_NAME}-${BUILD_NUMBER} -p 3000:3000 ${DOCKER_IMAGE}:${BUILD_NUMBER}
-                    """
+                    // Run Docker container (this step can still use Docker to run the container)
+                    sh 'docker run -d --name ${APP_NAME}-${BUILD_NUMBER} -p 3000:3000 ${DOCKER_IMAGE}:${BUILD_NUMBER}'
                 }
             }
         }
@@ -58,16 +54,10 @@ pipeline {
 
     post {
         success {
-            // Notify on success (e.g., via Slack, Email, etc.)
             echo "Build and deployment succeeded!"
         }
         failure {
-            // Notify on failure
             echo "Build or deployment failed!"
-        }
-        always {
-            // Clean up Docker container after deployment
-            sh 'docker system prune -f'
         }
     }
 }
