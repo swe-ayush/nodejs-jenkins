@@ -8,7 +8,6 @@ pipeline {
     environment {
         APP_NAME = 'node-app'
         DOCKER_IMAGE = 'node-app-image'  // Base name for the image
-        BUILD_NUMBER = env.BUILD_NUMBER  // Jenkins build number
     }
     
     stages {
