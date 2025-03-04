@@ -2,7 +2,7 @@ pipeline {
     agent any  // Use any available Jenkins agent
 
     tools {
-        nodejs 'NodeJS 22'  // Refer to the NodeJS version configured in Jenkins (installed via NodeJS plugin)
+        nodejs 'node'  // Refer to the NodeJS version configured in Jenkins (installed via NodeJS plugin)
     }
 
     stages {
